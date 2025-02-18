@@ -65,12 +65,12 @@ function ProductComp({ product, onAddToCart }) {
               style={{ width: "150px" }}
             />
           </div>
-          <div className="w-50">
+          <div className="w-60">
             <Card.Title>{product.title}</Card.Title>
             <Card.Text>{product.description}</Card.Text>
             <Card.Text>Price: {product.price}</Card.Text>
             <Card.Text>In Stock: 5</Card.Text>
-            <Card.Text>Bought: 15</Card.Text>
+            <Card.Text>Bought: {product.bought}</Card.Text>
           </div>
         </Card.Body>
 

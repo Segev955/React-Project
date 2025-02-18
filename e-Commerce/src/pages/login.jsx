@@ -33,15 +33,14 @@ function LoginComp({ setMainUser }) {
       const findUser = allUsers.find((u) => u.username == user.username);
       if (findUser) {
         if (findUser.password == user.password) {
-          sessionStorage.setItem(
-            "user",
-            JSON.stringify({
-              username: findUser.username,
-              id: findUser.id,
-              admin: findUser.admin,
-            })
-          );
-          setMainUser(user);
+          const userToStore = {
+            username: findUser.username,
+            id: findUser.id,
+            admin: findUser.admin,
+            seeOrders: findUser.seeOrders
+          };
+          sessionStorage.setItem("user", JSON.stringify(userToStore));
+          setMainUser(userToStore);
           findUser.admin ? navigate("/categories") : navigate("/products");
         } else alert("Wrong Password");
       } else alert("No such Username");

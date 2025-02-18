@@ -35,7 +35,7 @@ function ManageProductComp({ tProduct }) {
     });
   }, []);
 
-  async function handleSave() {
+  async function handleSave() {    
     await updateDoc(doc(db, "products", product.id), product);
     alert(product.title + " Saved");
   }
@@ -87,7 +87,7 @@ function ManageProductComp({ tProduct }) {
               >
                 {categories.map((categorie) => {
                   return (
-                    <option key={categorie.id} value={categorie.name}>
+                    <option key={categorie.id} value={categorie.id}>
                       {categorie.name}
                     </option>
                   );

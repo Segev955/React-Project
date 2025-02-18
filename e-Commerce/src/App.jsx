@@ -15,22 +15,12 @@ import LogoutComp from "./pages/logout";
 import MyOrdersComp from "./pages/customers/myOrders";
 import ProductsComp from "./pages/customers/products";
 import ManageProductsComp from "./pages/admins/mProducts";
+import StatisticsComp from "./pages/admins/statistics";
 
 function App() {
   const [user, setUser] = useState(() => {
     return JSON.parse(sessionStorage.getItem("user")) || null;
   });
-
-  useEffect(() => {
-    const updateUser = () => {
-      setUser(JSON.parse(sessionStorage.getItem("user")) || null);
-    };
-    window.addEventListener("storage", updateUser);
-    return () => {
-      window.removeEventListener("storage", updateUser);
-    };
-  }, []);
-
 
   return (
     <>
@@ -79,6 +69,7 @@ function App() {
             <Route path="/categories" element={<CategoriesComp />} />
             <Route path="/customers" element={<CustomersComp />} />
             <Route path="/manageproducts" element={<ManageProductsComp />} />
+            <Route path="/statistics" element={<StatisticsComp />} />
           </Route>
           {/* Customer */}
           <Route element={<ProtectedRoute />}>

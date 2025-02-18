@@ -19,6 +19,8 @@ import {
   onSnapshot,
   query,
   getDoc,
+  increment,
+  arrayUnion,
 } from "firebase/firestore";
 import ProductComp from "./product";
 
@@ -77,6 +79,7 @@ function ProductsComp() {
           id: product.id,
           title: product.title,
           price: product.price,
+          category: product.category,
           quantity: quantity,
         },
       ]);
@@ -91,6 +94,7 @@ function ProductsComp() {
     const userId = JSON.parse(sessionStorage.getItem("user")).id;
     const userDocRef = doc(db, "users", userId);
     const userDoc = await getDoc(userDocRef);
+    const seeOrders = JSON.parse(sessionStorage.getItem("user")).seeOrders;
 
     const currentOrders = userDoc.data().orders || [];
 
@@ -101,13 +105,29 @@ function ProductsComp() {
       })),
       orderDate: new Date().toLocaleDateString("en-GB"),
     };
+    console.log(newOrder);
 
     try {
       await updateDoc(userDocRef, { orders: [...currentOrders, newOrder] });
-      alert('Orderd Sucsessfuly!')
-      navigate('/logout')
+
+      if (seeOrders) {
+        newOrder.items.forEach(async (item) => {
+          const productDocRef = doc(db, "products", item.id);
+
+          await updateDoc(productDocRef, {
+            bought: increment(item.quantity),
+            boughtby: arrayUnion(userId),
+          });
+
+          const categoryDocRef = doc(db, "categories", item.category);
+          await updateDoc(categoryDocRef, { bought: increment(item.quantity) });
+        });
+      }
+
+      alert("Orderd Sucsessfuly!");
+      navigate("/logout");
     } catch (error) {
-      alert('Orderd Failed!')
+      alert("Orderd Failed!");
       console.log(error);
     }
   }
@@ -163,7 +183,6 @@ function ProductsComp() {
                     Place Order
                   </Button>
                 </div>
-                
               </>
             )}
           </Offcanvas.Body>
