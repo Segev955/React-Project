@@ -5,7 +5,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 
 import LoginComp from "./pages/login";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, NavLink  } from "react-router-dom";
 import RegisterComp from "./pages/register";
 import CategoriesComp from "./pages/admins/categories";
 import ProtectedRoute from "./pages/ProtectedRoute";
@@ -36,20 +36,20 @@ function App() {
                 <div className="text-center mb-4">
                   Hello, Admin <br />
                   <Nav className="customersNav">
-                    <Nav.Link href="/categories">Categories</Nav.Link>
-                    <Nav.Link href="/manageproducts">Products</Nav.Link>
-                    <Nav.Link href="/customers">Customers</Nav.Link>
-                    <Nav.Link href="/statistics">Statistics</Nav.Link>
-                    <Nav.Link href="/logout">Log Out</Nav.Link>
+                    <Nav.Link as={NavLink} to="/categories">Categories</Nav.Link>
+                    <Nav.Link as={NavLink} to="/manageproducts">Products</Nav.Link>
+                    <Nav.Link as={NavLink} to="/customers">Customers</Nav.Link>
+                    <Nav.Link as={NavLink} to="/statistics">Statistics</Nav.Link>
+                    <Nav.Link as={NavLink} to="/logout">Log Out</Nav.Link>
                   </Nav>
                 </div>
               ) : (
                 <div className="text-center mb-4">
                   <Nav className="customersNav">
-                    <Nav.Link href="/products">Products</Nav.Link>
-                    <Nav.Link href="/myorders">My Orders</Nav.Link>
-                    <Nav.Link href="/myaccount">My Account</Nav.Link>
-                    <Nav.Link href="/logout">Log Out</Nav.Link>
+                    <Nav.Link as={NavLink} to="/products">Products</Nav.Link>
+                    <Nav.Link as={NavLink} to="/myorders">My Orders</Nav.Link>
+                    <Nav.Link as={NavLink} to="/myaccount">My Account</Nav.Link>
+                    <Nav.Link as={NavLink} to="/logout">Log Out</Nav.Link>
                   </Nav>
                 </div>
               )
