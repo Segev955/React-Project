@@ -13,6 +13,7 @@ import {
   onSnapshot,
   getDoc,
 } from "firebase/firestore";
+import TableComp from "../tableComp";
 
 function MyOrdersComp() {
   const [orders, setOrders] = useState([]);
@@ -33,37 +34,18 @@ function MyOrdersComp() {
   return (
     <Container>
       <h3>Orders</h3>
-      <Table
-        striped
-        bordered
-        hover
-        size="sm"
-        responsive
-        className="w-auto text-center"
-      >
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Qty</th>
-            <th>total</th>
-            <th>Date</th>
+      <TableComp
+        headers={["Title", "Qty", "Total", "Date"]}
+        data={orders.flat() || []}
+        renderRow={(o, idx) => (
+          <tr key={idx}>
+            <td>{o.title}</td>
+            <td>{o.quantity}</td>
+            <td>{o.price * o.quantity + "$"}</td>
+            <td>{o.date}</td>
           </tr>
-        </thead>
-        <tbody>
-          {orders.map((ord) => {
-            return ord.map((o,index) => {
-              return (
-                <tr key={index}>
-                  <td>{o.title}</td>
-                  <td>{o.quantity}</td>
-                  <td>{o.price*o.quantity + '$'}</td>
-                  <td>{o.date}</td>
-                </tr>
-              );
-            });
-          })}
-        </tbody>
-      </Table>
+        )}
+      />
     </Container>
   );
 }

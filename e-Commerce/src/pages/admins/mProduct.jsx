@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import db from "../../firebase";
 
-
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
@@ -17,31 +16,61 @@ import {
   onSnapshot,
   query,
 } from "firebase/firestore";
+import TableComp from "../tableComp";
 
 function ManageProductComp({ tProduct }) {
   const [product, setProduct] = useState(tProduct);
   const [categories, setCategories] = useState([]);
+  const [usersMap, setUsersMap] = useState({});
 
   useEffect(() => {
+    // Fetch categories
     const q = query(collection(db, "categories"));
     onSnapshot(q, (qSnapshot) => {
-      const categ = qSnapshot.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
-      });
+      const categ = qSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       setCategories(categ);
     });
+
+    // Fetch users and create a map (userId -> username)
+    const fetchUsers = async () => {
+      const usersSnapshot = await onSnapshot(
+        query(collection(db, "users")),
+        (snapshot) => {
+          const users = {};
+          snapshot.docs.forEach((doc) => {
+            const userData = doc.data();
+            users[doc.id] = `${userData.firstName} ${userData.lastName}`;
+          });
+          setUsersMap(users);
+        }
+      );
+    };
+
+    fetchUsers();
   }, []);
 
-  async function handleSave() {    
+  async function handleSave() {
     await updateDoc(doc(db, "products", product.id), product);
     alert(product.title + " Saved");
   }
 
+  async function getName(userId) {
+    try {
+      const userDocRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userDocRef);
+      const userData = userDoc.data();
+      return `${userData.firstName} ${userData.lastName}`;
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return "Error";
+    }
+  }
+
   return (
-    <Card className="p-4 shadow">
+    <Card className="p-4 shadow mb-2">
       <Form>
         <Row>
           {/* Title */}
@@ -79,7 +108,7 @@ function ManageProductComp({ tProduct }) {
             <Form.Group className="mb-3" controlId="category">
               <Form.Label>Category</Form.Label>
               <Form.Select
-              className="form-control"
+                className="form-control"
                 value={product.category}
                 onChange={(e) =>
                   setProduct({ ...product, category: e.target.value })
@@ -130,36 +159,18 @@ function ManageProductComp({ tProduct }) {
           {/* Bought By Table */}
           <Col md={6}>
             <h6>Bought By:</h6>
-            <Table
-              bordered
-              hover
-              size="sm"
-              responsive
-              className="w-auto text-center"
-            >
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Qty</th>
-                  <th>Date</th>
+            <TableComp
+              headers={["Name", "Qty", "Date"]}
+              data={product.boughtby || []}
+              renderRow=
+              {(pro, idx) => (
+                <tr key={idx}>
+                  <td>{usersMap[pro.userId] || ""}</td>
+                  <td>{pro.qty}</td>
+                  <td>{pro.date}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {product.boughtBy && product.boughtBy.length > 0 ? (
-                  product.boughtBy.map((entry, idx) => (
-                    <tr key={idx}>
-                      <td>{entry.name}</td>
-                      <td>{entry.qty}</td>
-                      <td>{entry.date}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="3">No one</td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
+              )}
+            />
           </Col>
         </Row>
         <Button variant="success" onClick={handleSave}>

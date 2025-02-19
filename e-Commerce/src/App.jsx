@@ -16,6 +16,7 @@ import MyOrdersComp from "./pages/customers/myOrders";
 import ProductsComp from "./pages/customers/products";
 import ManageProductsComp from "./pages/admins/mProducts";
 import StatisticsComp from "./pages/admins/statistics";
+import { Justify } from "react-bootstrap-icons";
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -24,6 +25,7 @@ function App() {
 
   return (
     <>
+    <div className="d-flex align-items-center justify-content-center text-center">
       <Navbar expand="lg" className="bg-body-tertiary">
         <Container>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -56,6 +58,7 @@ function App() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      </div>
       <div style={{ backgroundColor: "rgb(243, 244, 245)", padding: " 20px" }}>
         <Routes>
           <Route path="/" element={<LoginComp setMainUser={setUser} />} />

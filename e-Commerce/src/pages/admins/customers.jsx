@@ -13,11 +13,10 @@ import {
   onSnapshot,
   query,
 } from "firebase/firestore";
+import TableComp from "../tableComp";
 
 function CustomersComp() {
   const [users, setUsers] = useState([]);
-  const [orders, setOrders] = useState([]);
-
 
   useEffect(() => {
     const q = query(collection(db, "users"));
@@ -28,67 +27,35 @@ function CustomersComp() {
           ...doc.data(),
         };
       });
-      setUsers(data);
+      const customer = data.filter((u) => !u.admin);
+      setUsers(customer);
     });
   }, []);
 
   return (
-    <Table
-      striped
-      bordered
-      hover
-      size="sm"
-      responsive
-      className="w-auto text-center"
-    >
-      <thead>
-        <tr>
-          <th>Full Name</th>
-          <th>Joined At</th>
-          <th>Products Bought</th>
+    <TableComp
+      headers={["Full Name", "Joined At", "Products Bought"]}
+      data={users}
+      renderRow={(user) => (
+        <tr key={user.id}>
+          <td>{`${user.firstName} ${user.lastName}`}</td>
+          <td>{user.joindate || "N/A"}</td>
+          <td>
+            <TableComp
+              headers={["Product", "Qty", "Date"]}
+              data={user.orders?.flatMap((entry) => entry.items) || []}
+              renderRow={(order, idx) => (
+                <tr key={idx}>
+                  <td>{order.title}</td>
+                  <td>{order.quantity}</td>
+                  <td>{order.date}</td>
+                </tr>
+              )}
+            />
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        {users.map((user) => {
-          return (
-            <tr key={user.id}>
-              <td>{`${user.firstName} ${user.lastName}`}</td>
-              <td>05/05/2005</td>
-              <td>
-                <Table bordered size="sm" className="text-center w-auto">
-                  <thead>
-                    <tr>
-                      <th>Product</th>
-                      <th>Qty</th>
-                      <th>Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {user.orders && user.orders.length > 0 ? (
-                      user.orders.map((entry) => {
-                        return entry.items.map((o,idx) => {
-                          return (
-                            <tr key={idx}>
-                              <td>{o.title}</td>
-                              <td>{o.quantity}</td>
-                              <td>{o.date}</td>
-                            </tr>
-                          );
-                        });
-                      })
-                    ) : (
-                      <tr>
-                        <td colSpan="3">Empty</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </Table>
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </Table>
+      )}
+    />
   );
 }
 

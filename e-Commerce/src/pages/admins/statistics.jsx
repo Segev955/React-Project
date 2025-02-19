@@ -29,10 +29,22 @@ import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 
 const COLORS = [
-  "#0088FE", "#00C49F", "#FFBB28", "#FF8042",
-  "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0",
-  "#9966FF", "#FF9F40", "#FFCD56", "#4BC0C0",
-  "#36A2EB", "#FF6384", "#FF9F40", "#9966FF"
+  "#0088FE",
+  "#00C49F",
+  "#FFBB28",
+  "#FF8042",
+  "#FF6384",
+  "#36A2EB",
+  "#FFCE56",
+  "#4BC0C0",
+  "#9966FF",
+  "#FF9F40",
+  "#FFCD56",
+  "#4BC0C0",
+  "#36A2EB",
+  "#FF6384",
+  "#FF9F40",
+  "#9966FF",
 ];
 function StatisticsComp() {
   const [products, setProducts] = useState([]);
@@ -66,8 +78,8 @@ function StatisticsComp() {
     });
   }, []);
 
-  const renderCustomLabel = ({ title, bought }) => {
-    return `${title}: ${bought}`;
+  const renderCustomLabel = ({ title }) => {
+    return title;
   };
 
   const filteredData = customers
@@ -106,6 +118,42 @@ function StatisticsComp() {
               />
             ))}
           </Pie>
+          <Pie
+            data={products}
+            cx="50%"
+            cy="50%"
+            innerRadius={40}
+            outerRadius={80}
+            fill="#8884d8"
+            dataKey="bought"
+            label={({ cx, cy, midAngle, innerRadius, outerRadius, index }) => {
+              const RADIAN = Math.PI / 180;
+              const radius = innerRadius + (outerRadius - innerRadius) * 0.5; // Middle of slice
+              const x = cx + radius * Math.cos(-midAngle * RADIAN);
+              const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+              return (
+                <text
+                  x={x}
+                  y={y}
+                  fill="black"
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fontSize={14}
+                  fontWeight="bold"
+                >
+                  {products[index].bought}
+                </text>
+              );
+            }}
+          >
+            {products.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
         </PieChart>
       </ResponsiveContainer>
       <br /> <br />
@@ -129,16 +177,16 @@ function StatisticsComp() {
           </Col>
         </Form.Group>
 
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="70%" height={300}>
           <BarChart data={aggregatedData}>
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="qty" >
-            {aggregatedData.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={COLORS[index % 20]} />
-        ))}
+            <Bar dataKey="qty">
+              {aggregatedData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % 20]} />
+              ))}
             </Bar>
           </BarChart>
         </ResponsiveContainer>

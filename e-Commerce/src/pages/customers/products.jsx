@@ -113,10 +113,26 @@ function ProductsComp() {
       if (seeOrders) {
         newOrder.items.forEach(async (item) => {
           const productDocRef = doc(db, "products", item.id);
+          const productDoc = await getDoc(productDocRef);
+          const currentBoughtBy = productDoc.data().boughtby || [];
+
+          const existingEntryIndex = currentBoughtBy.findIndex(
+            (entry) => entry.userId === userId
+          );
+
+          if (existingEntryIndex >= 0) {
+            currentBoughtBy[existingEntryIndex].qty += item.quantity;
+          } else {
+            currentBoughtBy.push({
+              userId: userId,
+              date: newOrder.orderDate,
+              qty: item.quantity,
+            });
+          }
 
           await updateDoc(productDocRef, {
             bought: increment(item.quantity),
-            boughtby: arrayUnion(userId),
+            boughtby: currentBoughtBy,
           });
 
           const categoryDocRef = doc(db, "categories", item.category);
@@ -124,10 +140,10 @@ function ProductsComp() {
         });
       }
 
-      alert("Orderd Sucsessfuly!");
-      navigate("/logout");
+      alert("Ordered Successfully!");
+      // navigate("/logout");
     } catch (error) {
-      alert("Orderd Failed!");
+      alert("Order Failed!");
       console.log(error);
     }
   }
