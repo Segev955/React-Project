@@ -57,6 +57,11 @@ function ManageProductComp({ tProduct }) {
     alert(product.title + " Saved");
   }
 
+  async function remove() {
+    await deleteDoc(doc(db, "products", product.id));
+    alert(product.title + " Removed");
+  }
+
   async function getName(userId) {
     try {
       const userDocRef = doc(db, "users", userId);
@@ -162,8 +167,7 @@ function ManageProductComp({ tProduct }) {
             <TableComp
               headers={["Name", "Qty", "Date"]}
               data={product.boughtby || []}
-              renderRow=
-              {(pro, idx) => (
+              renderRow={(pro, idx) => (
                 <tr key={idx}>
                   <td>{usersMap[pro.userId] || ""}</td>
                   <td>{pro.qty}</td>
@@ -173,9 +177,18 @@ function ManageProductComp({ tProduct }) {
             />
           </Col>
         </Row>
-        <Button variant="success" onClick={handleSave}>
-          Save
-        </Button>
+        <Row>
+          <Col className="text-start">
+            <Button variant="success" onClick={handleSave} className="me-2">
+              Save
+            </Button>
+          </Col>
+          <Col className="text-end">
+            <Button variant="danger" onClick={remove}>
+              Remove
+            </Button>
+          </Col>
+        </Row>
       </Form>
     </Card>
   );

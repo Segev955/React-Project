@@ -17,6 +17,7 @@ import ProductsComp from "./pages/customers/products";
 import ManageProductsComp from "./pages/admins/mProducts";
 import StatisticsComp from "./pages/admins/statistics";
 import { Justify } from "react-bootstrap-icons";
+import AdminRoute from "./pages/adminRoute";
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -68,7 +69,7 @@ function App() {
             element={<LogoutComp setMainUser={setUser} />}
           />
           {/* Admin */}
-          <Route element={<ProtectedRoute />}>
+          <Route element={<AdminRoute />}>
             <Route path="/categories" element={<CategoriesComp />} />
             <Route path="/customers" element={<CustomersComp />} />
             <Route path="/manageproducts" element={<ManageProductsComp />} />
