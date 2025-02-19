@@ -99,7 +99,7 @@ function StatisticsComp() {
   return (
     <>
       <ResponsiveContainer width="100%" height={300}>
-        <h2 className="text-center mb-4">Total Sold Products</h2>
+        <h2 className="text-center mb-2">Total Sold Products</h2>
         <PieChart width={400} height={400}>
           <Pie
             data={products}
@@ -158,10 +158,10 @@ function StatisticsComp() {
       </ResponsiveContainer>
       <br /> <br />
       <Container>
-        <h2 className="text-center mb-4">Product Sales per Customer</h2>
+        <h2 className="text-center mb-2">Product Sales per Customer</h2>
         <Form.Group>
           <Form.Label>Select Customer:</Form.Label>
-          <Col sm={4}>
+          <Col sm={2}>
             <Form.Select
               className="form-control"
               onChange={(e) => setSelectedCustomer(e.target.value)}
@@ -176,8 +176,8 @@ function StatisticsComp() {
             </Form.Select>
           </Col>
         </Form.Group>
-
-        <ResponsiveContainer width="70%" height={300}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <ResponsiveContainer width="60%" height={300}>
           <BarChart data={aggregatedData}>
             <XAxis dataKey="name" />
             <YAxis />
@@ -190,6 +190,7 @@ function StatisticsComp() {
             </Bar>
           </BarChart>
         </ResponsiveContainer>
+        </div>
       </Container>
     </>
   );
